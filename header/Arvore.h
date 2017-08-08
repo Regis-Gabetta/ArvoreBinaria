@@ -11,8 +11,9 @@ class Arvore{
 
 	struct No{
 		T info;
-		struct No *nx;
-		struct No *pv;
+		struct No *l;
+		struct No *r;
+		struct No *p;
 	};
 
  public:
@@ -48,8 +49,42 @@ Arvore<T>::~Arvore(){
 }
 
 template<typename T>
-void Arvore<T>::delete(T& o){
+void Arvore<T>::delete(){
 	
+}
+
+template<typename T>
+void Arvore<T>::insert(T& o){
+	No *no = root;
+
+	if (root == NULL){
+		root = new No(o, NULL, NULL);
+	}
+
+	else
+		while(1){
+			if (o < no->info){
+				if (no->l == NULL){
+					no->l = new No(o, NULL, NULL);
+					break;
+				}
+
+				no = no->l;
+				continue;
+			}
+
+			if (o > no->info){
+				if (no->r == NULL){
+				 no->r = new No(o, NULL, NULL);
+				 break;
+			 }
+
+				no = no->r;
+				continue;
+			 }
+
+			break;		
+		} 
 }
 
 template<typename T>
