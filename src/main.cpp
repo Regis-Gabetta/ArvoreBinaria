@@ -16,8 +16,11 @@ int main(int argc, char **args){
 	a.insert('G');
 	a.insert('D');
 	a.insert('Z');
+	a.insert('W');
 
-	std::cout << '\n' << a.toString() << '\n' << '\n';
+	std::cout << '\n' << a.toString() << '\n' << '\n'
+						<< "count:" << a.getCount() << '\n'
+						<< "height:" << a.getHeight() << '\n' << '\n';
 	
 	return 0;
 }
