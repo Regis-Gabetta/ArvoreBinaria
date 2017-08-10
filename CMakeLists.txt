@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 
-project(ArvoreBinaria CXX C)
+project(ArvoreBinaria C CXX)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -13,13 +13,11 @@ include_directories (
 )
 
 set (HEADERS
-  header/NoArvore.h
 	header/Arvore.h
 )
 
 set (SRC
-  header/NoArvore.cpp
-	header/Arvore.cpp
+	src/main.cpp
 )
 
 set (ALL ${HEADERS} ${SRC})

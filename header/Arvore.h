@@ -2,7 +2,7 @@
 #define ARVORE
 
 #include <stdlib.h>
-#include <excpt.h>
+#include <string>
 
 using namespace std;
 
@@ -24,14 +24,14 @@ class Arvore{
 
 
 	void insert(T o);
-	void delete();
-	void insert(T o);
-	String toString();
+	void remove();
+	void balance();
+	std::string toString();
 	
  protected:
   struct Node *root; 
 	unsigned int count;
-	String toStringAux(const Node *no, String str); 
+	std::string toStringAux(const struct Node *no); 
 };
 
 template<typename T>
@@ -46,22 +46,25 @@ Arvore<T>::Arvore(const Arvore<T> *a){
 }
 
 template<typename T>
-String Arvore<T>::toString(){
-	return toStringAux(root, "");
+std::string Arvore<T>::toString(){
+	return toStringAux(root);
 }
 
 template<typename T>
-String Arvore<T>::toStringAux(const Node *no, String str){
+std::string Arvore<T>::toStringAux(const Node *no){
+
+	std::string str = "";
+	
 	if (no != NULL){
-		str += '(';
+		str += "(";
 		
-		str += toString(no->l, str);
+		str += toStringAux(no->l);
 
-		str += " " + no->info + " ";
+		str += no->info;
 
-		str += toString(no->r, str);
+		str += toStringAux(no->r);
 
-		str += ')';
+		str += ")";
 	}
 
 	return str;
@@ -73,23 +76,28 @@ Arvore<T>::~Arvore(){
 }
 
 template<typename T>
-void Arvore<T>::delete(){
-	
+void Arvore<T>::remove(){
 }
 
 template<typename T>
-void Arvore<T>::insert(T& o){
+void Arvore<T>::insert(T o){
 	Node *no = root;
-
+	
 	if (root == NULL){
-		root = new Node(o, NULL, NULL);
+		root = (struct Node*) malloc(sizeof(struct Node));
+		root->l = NULL;
+		root->r = NULL;
+		root->info = o;
 	}
 
 	else
 		while(1){
 			if (o < no->info){
 				if (no->l == NULL){
-					no->l = new Node(o, NULL, NULL);
+					no->l =	(struct Node*) malloc(sizeof(struct Node));
+					no->l->info = o;
+					no->l->l = NULL;
+					no->l->r = NULL;
 					break;
 				}
 
@@ -99,9 +107,12 @@ void Arvore<T>::insert(T& o){
 
 			if (o > no->info){
 				if (no->r == NULL){
-					no->r = new Node(o, NULL, NULL);
+					no->r =	(struct Node*) malloc(sizeof(struct Node));
+					no->r->info = o;
+					no->r->l = NULL;
+					no->r->r = NULL;
 					break;
-			 }
+				}
 
 				no = no->r;
 				continue;
@@ -112,7 +123,7 @@ void Arvore<T>::insert(T& o){
 }
 
 template<typename T>
-void Arvore<T>::balance(T& o){
+void Arvore<T>::balance(){
 	
 }
 
