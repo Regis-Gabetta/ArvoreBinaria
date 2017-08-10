@@ -105,6 +105,7 @@ void Arvore<T>::insert(T o){
 		root->r = NULL;
 		root->info = o;
 		root->h = 1;
+		count++;
 	}
 
 	else
@@ -119,6 +120,7 @@ void Arvore<T>::insert(T o){
 					no->l->p = no;
 					
 					no = no->l;
+					count++;
 					break;
 				}
 				no = no->l;
@@ -135,6 +137,7 @@ void Arvore<T>::insert(T o){
 					no->r->p = no;
 					
 					no = no->l;
+					count++;
 					break;
 				}
 
