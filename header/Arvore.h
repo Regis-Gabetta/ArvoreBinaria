@@ -6,6 +6,7 @@
 
 #define max(n1,n2) (n1 > n2 ? n1 : n2)
 #define height(n) (n == NULL ? 0 : n->h)
+#define bf(n) (height(n->l) - height(n->r))
 
 using namespace std;
 
@@ -151,6 +152,27 @@ void Arvore<T>::insert(T o){
 
 	while(no != NULL){
 		no->h = max(height(no->l),height(no->r)) + 1;
+
+		int balanceF = bf(no);
+		
+		/* if (balanceF > 1) 			 */
+		/* 	if(no->r > 1){ */
+		/* 		rotateRight(no); */
+		/* 		rotateLeft(no->r); */
+		/* 	} */
+
+		/* 	else */
+		/* 		rotateRight(no); */
+
+		/* else if (balanceF < -1) 			 */
+		/* 	if(bf(no->r) < -1){ */
+		/* 		rotateRight(no); */
+		/* 		rotateRight(no->r); */
+		/* 	} */
+
+		/* 	else */
+		/* 		rotateRight(no); */ 
+		
 		no = no->p;
 	}
 }
