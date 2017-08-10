@@ -1,5 +1,5 @@
-#ifndef LISTA_SIMPLES
-#define LISTA_SIMPLES
+#ifndef ARVORE
+#define ARVORE
 
 #include <stdlib.h>
 #include <excpt.h>
@@ -9,11 +9,11 @@ using namespace std;
 template<typename T>
 class Arvore{
 
-	struct No{
+	struct Node{
 		T info;
-		struct No *l;
-		struct No *r;
-		struct No *p;
+		struct Node *l;
+		struct Node *r;
+		struct Node *p;
 	};
 
  public:
@@ -26,10 +26,12 @@ class Arvore{
 	void insert(T o);
 	void delete();
 	void insert(T o);
+	String toString();
 	
  protected:
-  struct NoLista *root; 
+  struct Node *root; 
 	unsigned int count;
+	String toStringAux(const Node *no, String str); 
 };
 
 template<typename T>
@@ -44,6 +46,28 @@ Arvore<T>::Arvore(const Arvore<T> *a){
 }
 
 template<typename T>
+String Arvore<T>::toString(){
+	return toStringAux(root, "");
+}
+
+template<typename T>
+String Arvore<T>::toStringAux(const Node *no, String str){
+	if (no != NULL){
+		str += '(';
+		
+		str += toString(no->l, str);
+
+		str += " " + no->info + " ";
+
+		str += toString(no->r, str);
+
+		str += ')';
+	}
+
+	return str;
+}
+
+template<typename T>
 Arvore<T>::~Arvore(){
   
 }
@@ -55,17 +79,17 @@ void Arvore<T>::delete(){
 
 template<typename T>
 void Arvore<T>::insert(T& o){
-	No *no = root;
+	Node *no = root;
 
 	if (root == NULL){
-		root = new No(o, NULL, NULL);
+		root = new Node(o, NULL, NULL);
 	}
 
 	else
 		while(1){
 			if (o < no->info){
 				if (no->l == NULL){
-					no->l = new No(o, NULL, NULL);
+					no->l = new Node(o, NULL, NULL);
 					break;
 				}
 
@@ -75,8 +99,8 @@ void Arvore<T>::insert(T& o){
 
 			if (o > no->info){
 				if (no->r == NULL){
-				 no->r = new No(o, NULL, NULL);
-				 break;
+					no->r = new Node(o, NULL, NULL);
+					break;
 			 }
 
 				no = no->r;
