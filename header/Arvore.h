@@ -15,9 +15,9 @@ class Arvore{
 
 	struct Node{
 		T info;
-		struct Node *l;
-		struct Node *r;
-		struct Node *p;
+		Node *l;
+		Node *r;
+		Node *p;
 
 		unsigned int h;
 	};
@@ -35,9 +35,13 @@ class Arvore{
 	std::string toString();
 	
  protected:
-  struct Node *root; 
+  Node *root; 
 	unsigned int count;
-	std::string toStringAux(const struct Node *no);
+	std::string toStringAux(const Node *no);
+	
+	void rotateLeft(Node *x);
+	void rotateRight(Node *y);
+	void copyNode(Node *n1, Node *n2);
 };
 
 template<typename T>
@@ -96,25 +100,92 @@ void Arvore<T>::remove(){
 }
 
 template<typename T>
+void Arvore<T>::copyNode(Node *n1, Node* n2){
+	n2->l = n1->l;
+	n2->r = n1->r;
+	n2->p = n1->p;
+	n2->info = n1->info;
+	n2->h = n1->h;
+}
+
+template<typename T>
+void Arvore<T>::rotateRight(Node *y){
+	Node* temp = (Node*) malloc(sizeof(Node));
+	copyNode(y, temp);
+	
+	Node* x = y->l;
+	Node* xr = x->r;
+	Node* yp = y->p;
+	copyNode(x, y);
+	y->p = yp;
+	
+	if(y->l != NULL)
+		y->l->p = y;
+	
+	copyNode(temp, x);
+	y->r = x;
+	x->p = y;
+	
+	x->l = xr;
+	
+	if (xr != NULL)
+		xr->p = temp;
+	
+	x->h = max(height(x->l),height(x->r)) + 1;
+	y->h = max(height(x->l),height(x->r)) + 1;
+	
+	delete temp;
+}
+
+template<typename T>
+void Arvore<T>::rotateLeft(Node *x){
+	Node* temp = (Node*) malloc(sizeof(Node));
+	copyNode(x, temp);
+	
+	Node* y = x->r;
+	Node* yl = y->l;
+	Node* xp = x->p;
+	copyNode(y, x);
+	x->p = xp;
+	
+	if (x->r != NULL)
+		x->r->p = x;
+	
+	copyNode(temp, y);
+	x->l = y;
+	y->p = x;
+	
+	y->r = yl;
+	
+	if (yl != NULL)
+		yl->p = temp;
+	
+	y->h = max(height(y->l),height(y->r)) + 1;
+	x->h = max(height(x->l),height(x->r)) + 1;
+	
+	delete temp;
+}
+
+template<typename T>
 void Arvore<T>::insert(T o){
 	Node *no = root;
 	
 	if (root == NULL){
-		root = (struct Node*) malloc(sizeof(struct Node));
+		root = (Node*) malloc(sizeof(Node));
 		root->p = NULL;
 		root->l = NULL;
 		root->r = NULL;
 		root->info = o;
 		root->h = 1;
+		no = root;
 		count++;
 	}
 
 	else
 		while(1){
 			if (o < no->info){
-				
 				if (no->l == NULL){
-					no->l =	(struct Node*) malloc(sizeof(struct Node));
+					no->l =	(Node*) malloc(sizeof(Node));
 					no->l->info = o;
 					no->l->l = NULL;
 					no->l->r = NULL;
@@ -129,15 +200,14 @@ void Arvore<T>::insert(T o){
 			}
 
 			if (o > no->info){
-				
 				if (no->r == NULL){
-					no->r =	(struct Node*) malloc(sizeof(struct Node));
+					no->r =	(Node*) malloc(sizeof(Node));
 					no->r->info = o;
 					no->r->l = NULL;
 					no->r->r = NULL;
 					no->r->p = no;
 					
-					no = no->l;
+					no = no->r;
 					count++;
 					break;
 				}
@@ -150,31 +220,45 @@ void Arvore<T>::insert(T o){
 			break;
 		}
 
+	Node* nop = no;
+	
 	while(no != NULL){
 		no->h = max(height(no->l),height(no->r)) + 1;
 
 		int balanceF = bf(no);
 		
-		/* if (balanceF > 1) 			 */
-		/* 	if(no->r > 1){ */
-		/* 		rotateRight(no); */
-		/* 		rotateLeft(no->r); */
-		/* 	} */
+		if (balanceF > 1){
+		 	if(o < no->l->info){
+		 		rotateRight(no);
+		 	}
 
-		/* 	else */
-		/* 		rotateRight(no); */
+		 	else{
+		 		rotateLeft(no->l);
+				rotateRight(no);
+			}
+			
+			continue;
+		}
 
-		/* else if (balanceF < -1) 			 */
-		/* 	if(bf(no->r) < -1){ */
-		/* 		rotateRight(no); */
-		/* 		rotateRight(no->r); */
-		/* 	} */
+		else if (balanceF < -1){
+		 	if(o > no->r->info){
+		 		rotateLeft(no);
+		 	}
 
-		/* 	else */
-		/* 		rotateRight(no); */ 
+		 	else{
+		 		rotateRight(no->r);
+				rotateLeft(no);
+			}
+			
+			continue;
+		}
 		
+		
+		nop = no;
 		no = no->p;
 	}
+	
+	root = nop;
 }
 
 template<typename T>
