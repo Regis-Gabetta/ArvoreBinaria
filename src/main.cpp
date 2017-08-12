@@ -65,7 +65,13 @@ int main(int argc, char **args){
 	a.insert('Y');
 	a.insert('Z');
 	
-	
+	a.remove('R');
+	a.remove('A');
+	a.remove('Q');
+	a.remove('L');
+	a.remove('F');
+	a.remove('V');
+	a.remove('E');
 
 	std::cout << '\n' << a.toString() << '\n' << '\n'
 						<< "count:" << a.getCount() << '\n'

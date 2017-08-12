@@ -30,8 +30,7 @@ class Arvore{
 
 
 	void insert(T o);
-	void remove();
-	void balance();
+	char remove(T o);
 	std::string toString();
 	
  protected:
@@ -96,7 +95,28 @@ Arvore<T>::~Arvore(){
 }
 
 template<typename T>
-void Arvore<T>::remove(){
+char Arvore<T>::remove(T o){
+	Node* nor = root;
+	while(nor != NULL){
+		if (nor->info == o)
+			break;
+		
+		else
+			if (o < nor->info)
+				nor = nor->l;
+			else
+				nor = nor->r;
+	}
+	
+	if (nor != NULL){
+		Node* no = nor->p;
+		Node* nop = no;
+		delete nor; // NAAAAAAAAAAO
+								// ERRRADDDDDOOOO
+		
+	}
+	
+	return 0;
 }
 
 template<typename T>
@@ -260,10 +280,4 @@ void Arvore<T>::insert(T o){
 	
 	root = nop;
 }
-
-template<typename T>
-void Arvore<T>::balance(){
-	
-}
-
 #endif
