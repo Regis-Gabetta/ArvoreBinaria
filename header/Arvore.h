@@ -31,6 +31,8 @@ class Arvore{
 
 	void insert(T o);
 	char remove(T o);
+	int remove_Node(Node *raiz, T o);
+	struct Node* procuraMenor(struct Node *atual);
 	std::string toString();
 	
  protected:
@@ -93,6 +95,83 @@ template<typename T>
 Arvore<T>::~Arvore(){
   
 }
+
+template<typename T>
+int Arvore<T>::remove_Node(Node *raiz, T o){
+	if(raiz == NULL)
+		return 0;
+	int res;
+	if(o < raiz->info)
+	{
+		if((res = remove_Node(&raiz->l,o)) == 1)
+			if(bf(raiz) >= 2)
+				if(raiz->r->l->h <= raiz->r->r->h)
+					rotateLeft(raiz);
+				else
+				{
+					rotateRight(raiz->r);
+					rotateLeft(raiz);
+				}
+	} 
+	
+	if(o > raiz->info)
+	{
+		if((res = remove_Node(&raiz->r,o)) == 1)
+			if(bf(raiz) >= 2)
+				if(raiz->l->r->h <= raiz->l->l->h)
+					rotateRight(raiz);
+				else
+				{
+					rotateLeft(raiz->l);
+					rotateRight(raiz);
+				}
+	}
+
+	if(raiz->info == valor)
+	{
+		if(raiz->l == NULL || raiz->r == NULL)
+		{
+			struct Node *old = raiz;
+			if(raiz->l != NULL)
+				copyNode(raiz->l,raiz);
+				//raiz = raiz->l;
+			else
+				copyNode(raiz->r,raiz);
+				//raiz = raiz->r;
+			free(old);
+		}
+		else
+		{
+			struct Node* temp = procuraMenor(raiz->r);
+			raiz->info = temp->info;
+			remove_Node(&raiz->r,raiz->info);
+			if(bf(raiz) >= 2)
+				if(raiz->l->r->h <= raiz->l->l)
+					rotateRight(raiz);
+				else 
+				{
+					rotateLeft(raiz->l);
+					rotateRight(raiz);
+				}
+					
+		}
+		return 1;
+	}
+	return res;	
+
+}
+
+template<typename T>
+struct Node* Arvore<T>::procuraMenor(struct Node *atual){
+	struct Node *no1 = atual;
+	struct Node *no2 = atual->l;
+	while(no2 != NULL){
+		no1 = no2;
+		no2 = no2->l;
+	}
+	return no1;
+}
+
 
 template<typename T>
 char Arvore<T>::remove(T o){
