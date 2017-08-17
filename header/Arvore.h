@@ -24,6 +24,7 @@ class Arvore{
  public:
   Arvore();
   ~Arvore();
+  void arvore_Destrutor(struct Node* raiz);
   Arvore(const Arvore<T> *a);
   unsigned int getCount() const;
   unsigned int getHeight() const;
@@ -37,7 +38,85 @@ class Arvore{
 
 	void insert(T o);
 	char remove(T o);
-	int remove_Node(Node *raiz, T o);
+	int remove_Node(Node *raiz, T o) {
+		if (raiz == NULL)
+			return 0;
+		int res;
+		if (o < raiz->info)
+		{
+			if ((res = remove_Node(raiz->l, o)) == 1) {
+				raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
+				int befao = bf(raiz);
+				if (befao < -1)
+				{
+					if (height(raiz->r->l) <= height(raiz->r->r))
+						rotateLeft(raiz);
+					else
+					{
+						rotateRight(raiz->r);
+						rotateLeft(raiz);
+					}
+				}
+			}
+
+		}
+
+		if (o > raiz->info)
+		{
+			if ((res = remove_Node(raiz->r, o)) == 1) {
+				raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
+				int befao = bf(raiz);
+				if (befao > 1)
+				{
+					if (height(raiz->l->r) <= height(raiz->l->l))
+						rotateLeft(raiz);
+					else
+					{
+						rotateRight(raiz->r);
+						rotateLeft(raiz);
+					}
+				}
+			}
+		}
+
+		if (raiz->info == o)
+		{
+			if (raiz->l == NULL || raiz->r == NULL)
+			{
+				struct Node *old = raiz;
+				if (raiz->l != NULL)
+					raiz = raiz->l;
+				else
+					raiz = raiz->r;
+				freeNode(old);
+			}
+			else
+			{
+				struct Node *no1 = raiz->r;
+				struct Node *no2 = raiz->r->l;
+				while (no2 != NULL) {
+					no1 = no2;
+					no2 = no2->l;
+				}
+				struct Node* temp = no1;
+				raiz->info = temp->info;
+				remove_Node(raiz->r, temp->info);
+				if (bf(raiz) > 1)
+				{
+					if (height(raiz->l->r) <= height(raiz->l->l))
+						rotateLeft(raiz);
+					else
+					{
+						rotateRight(raiz);
+						rotateLeft(raiz);
+					}
+				}
+			}
+			return 1;
+		}
+		return res;
+
+	}
 	std::string toString() const;
 	Node *root;
 	
@@ -114,82 +193,21 @@ std::string Arvore<T>::toStringAux(const Node *no) const {
 
 template<typename T>
 Arvore<T>::~Arvore(){
-  
+
+	arvore_Destrutor(root);
+
 }
 
 template<typename T>
-int Arvore<T>::remove_Node(Node *raiz, T o){
-	if(raiz == NULL)
-		return 0;
-	int res;
-	if(o < raiz->info)
+void Arvore<T>::arvore_Destrutor(struct Node *raiz)
+{
+	if (raiz != NULL)
 	{
-		if((res = remove_Node(raiz->l,o)) == 1)
-			if (bf(raiz) <= -2)
-			{
-					if (height(raiz->r->l) <= height(raiz->r->r))
-						rotateLeft(raiz);
-					else
-					{
-						rotateRight(raiz->r);
-						rotateLeft(raiz);
-					}
-			}
-				
-	} 
-	
-	if(o > raiz->info)
-	{
-		if((res = remove_Node(raiz->r,o)) == 1)
-			if (bf(raiz) >= 2)
-			{
-				if (height(raiz->l->r) <= height(raiz->l->l))
-					rotateLeft(raiz);
-				else
-				{
-					rotateRight(raiz->r);
-					rotateLeft(raiz);
-				}
-			}				
+		arvore_Destrutor(raiz->l);
+		arvore_Destrutor(raiz->r);
+		free(raiz) ;
+		raiz = NULL;
 	}
-
-	if(raiz->info == o)
-	{
-		if(raiz->l == NULL || raiz->r == NULL)
-		{
-			struct Node *old = raiz;
-			if(raiz->l != NULL)
-				raiz = raiz->l;
-			else
-				raiz = raiz->r;
-			freeNode(old);
-		}
-		else
-		{
-			struct Node *no1 = raiz->r;
-			struct Node *no2 = raiz->r->l;
-			while (no2 != NULL) {
-				no1 = no2;
-				no2 = no2->l;
-			}
-			struct Node* temp = no1;
-			raiz->info = temp->info;
-			remove_Node(raiz->r,raiz->info);
-			if (bf(raiz) >= 2)
-			{
-				if (height(raiz->l->r) <= height(raiz->l->l))
-					rotateLeft(raiz);
-				else
-				{
-					rotateRight(raiz->r);
-					rotateLeft(raiz);
-				}
-			}					
-		}
-		return 1;
-	}
-	return res;	
-
 }
 
 //template<typename T>
@@ -240,17 +258,17 @@ void Arvore<T>::copyNode(Node *n1, Node* n2){
 
 template<typename T>
 void Arvore<T>::freeNode(Node *n1) {
-	if (n1->p != NULL)
-	{
-		if(n1->p->l != NULL)
+	if (n1->p != NULL) {
+		if (n1->p->l != NULL)
 			if (n1->p->l->info == n1->info)
 				n1->p->l = NULL;
+
 		if(n1->p->r != NULL)
 			if (n1->p->r->info == n1->info)
 				n1->p->r = NULL;
 	}
 	
-	n1 = NULL;
+	free(n1);
 	count--;
 }
 
@@ -275,11 +293,17 @@ void Arvore<T>::rotateRight(Node *y){
 	x->l = xr;
 	
 	if (xr != NULL)
-		xr->p = temp;
+		xr->p = x;
+
+	if (x->l != NULL)
+		x->l->p = x;
+
+	if (x->r != NULL)
+		x->r->p = x;
 	
 	x->h = max(height(x->l),height(x->r)) + 1;
 	y->h = max(height(x->l),height(x->r)) + 1;
-	
+
 	delete temp;
 }
 
@@ -304,11 +328,17 @@ void Arvore<T>::rotateLeft(Node *x){
 	y->r = yl;
 	
 	if (yl != NULL)
-		yl->p = temp;
+		yl->p = y;
+
+	if (y->l != NULL)
+		y->l->p = y;
+
+	if (y->r != NULL)
+		y->r->p = y;
 	
 	y->h = max(height(y->l),height(y->r)) + 1;
 	x->h = max(height(x->l),height(x->r)) + 1;
-	
+
 	delete temp;
 }
 
@@ -363,7 +393,6 @@ void Arvore<T>::insert(T o){
 			 }
 
 			return;
-			break;
 		}
 
 	Node* nop = no;

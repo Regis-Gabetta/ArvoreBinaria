@@ -1,0 +1,76 @@
+estrutura No
+	info
+	esq
+	dir
+	pai
+	altura
+
+raiz
+
+inserir info
+	no := raiz
+
+	se raiz = null
+		raiz := novo No
+						info := info
+						esq := null
+						dir := null
+						pai := null
+						altura := 1
+	senão
+		enquanto verdadeiro
+			se info < no info
+				se no esq = null
+					nov := novo No
+									info := info
+									esq := null
+									dir := null
+									pai := no
+									altura := 1
+					pare
+				no = no esq
+				continue
+
+			se info > no info
+				se no dir = null
+					nov := novo No
+									info := info
+									esq := null
+									dir := null
+									pai := no
+									altura := 1
+					pare
+				no = no dir
+				continue
+
+			retorne
+
+	nop = no
+
+	enquanto no não= null
+		no altura := maior de altura no esq e no dir + 1
+
+		fator de balanceamento = no esq altura - no dir altura
+
+		se fator de balanceamento > 1
+			se info < no esq info
+				rotacione no para a direita
+			senão
+				rotacione no esq para esquerda
+				rotacione no para direita
+
+			continue
+
+		senão se fator de balanceamento < -1
+			se info > no dir info
+				rotacione no para esquerda
+			senão
+				rotacione no dir para direita
+				rotacione no para esquerda
+
+			continue
+
+		nop := no
+		no := no pai
+
+	raiz := nop
