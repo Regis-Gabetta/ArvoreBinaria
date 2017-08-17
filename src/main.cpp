@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, char **args){
 
 	Arvore<char> a = Arvore<char>();
-
+	char* c = (char*)malloc(15*sizeof(char));
 //	a.insert('A');
 //	a.insert('B');
 //	a.insert('C');
@@ -38,44 +38,25 @@ int main(int argc, char **args){
 //	a.insert('Y');
 //	a.insert('Z');
 	
-	a.insert('X');
-	a.insert('A');
-	a.insert('E');
-	a.insert('C');
-	a.insert('G');
-	a.insert('I');
-	a.insert('K');
-	a.insert('P');
-	a.insert('F');
-	a.insert('L');
-	a.insert('R');
-	a.insert('J');
-	a.insert('N');
-	a.insert('O');
 	a.insert('S');
-	a.insert('B');
-	a.insert('H');
-	a.insert('Q');
+	a.insert('A');
 	a.insert('T');
-	a.insert('M');
-	a.insert('D');
-	a.insert('V');
 	a.insert('U');
-	a.insert('W');
-	a.insert('Y');
-	a.insert('Z');
-	
-	a.remove('R');
-	a.remove('A');
-	a.remove('Q');
-	a.remove('L');
-	a.remove('F');
-	a.remove('V');
-	a.remove('E');
+	a.insert('V');
 
-	std::cout << '\n' << a.toString() << '\n' << '\n'
+	
+	a.remove_Node(a.root,'A');
+	//a.remove('A');
+	//a.remove('Q');
+	//a.remove('L');
+	//a.remove('F');
+	//a.remove('V');
+	//a.remove('E');
+
+	std::cout << '\n' << a << '\n' << '\n'
 						<< "count:" << a.getCount() << '\n'
 						<< "height:" << a.getHeight() << '\n' << '\n';
+	cin >> c;
 	
 	return 0;
 }
