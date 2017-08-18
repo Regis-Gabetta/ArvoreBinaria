@@ -38,6 +38,8 @@ class Arvore{
 
 	void insert(T o);
 	char remove(T o);
+
+
 	int remove_Node(Node *raiz, T o) {
 		if (raiz == NULL)
 			return 0;
@@ -88,7 +90,7 @@ class Arvore{
 					raiz = raiz->l;
 				else
 					raiz = raiz->r;
-				freeNode(old);
+				freeNode(old, raiz);
 			}
 			else
 			{
@@ -101,21 +103,21 @@ class Arvore{
 				struct Node* temp = no1;
 				raiz->info = temp->info;
 				remove_Node(raiz->r, temp->info);
-				if (bf(raiz) > 1)
+				int befao = bf(raiz);
+				if (befao > 1)
 				{
 					if (height(raiz->l->r) <= height(raiz->l->l))
-						rotateLeft(raiz);
+						rotateRight(raiz);
 					else
 					{
+						rotateLeft(raiz->l);
 						rotateRight(raiz);
-						rotateLeft(raiz);
 					}
 				}
 			}
 			return 1;
 		}
 		return res;
-
 	}
 	std::string toString() const;
 	Node *root;
@@ -128,7 +130,7 @@ class Arvore{
 	void rotateLeft(Node *x);
 	void rotateRight(Node *y);
 	void copyNode(Node *n1, Node *n2);
-	void freeNode(Node *n1);
+	void freeNode(Node *n1, Node* noR);
 };
 
 template<typename T>
@@ -257,15 +259,15 @@ void Arvore<T>::copyNode(Node *n1, Node* n2){
 }
 
 template<typename T>
-void Arvore<T>::freeNode(Node *n1) {
+void Arvore<T>::freeNode(Node *n1, Node* noR) {
 	if (n1->p != NULL) {
 		if (n1->p->l != NULL)
 			if (n1->p->l->info == n1->info)
-				n1->p->l = NULL;
+				n1->p->l = noR;
 
 		if(n1->p->r != NULL)
 			if (n1->p->r->info == n1->info)
-				n1->p->r = NULL;
+				n1->p->r = noR;
 	}
 	
 	free(n1);
