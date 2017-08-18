@@ -89,8 +89,18 @@ class Arvore{
 				if (raiz->l != NULL)
 					raiz = raiz->l;
 				else
+				{
+					Node* pai = raiz->p;
 					raiz = raiz->r;
+					if (raiz != NULL)
+					{
+						raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
+						raiz->p = pai;
+					}						
+				}
+					
 				freeNode(old, raiz);
+				
 			}
 			else
 			{
@@ -114,6 +124,7 @@ class Arvore{
 						rotateRight(raiz);
 					}
 				}
+				raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
 			}
 			return 1;
 		}

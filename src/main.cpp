@@ -41,14 +41,14 @@ int main(int argc, char **args){
 	
 	a.remove_Node(a.root,'A');
 	a.remove_Node(a.root, 'S');
-	a.remove_Node(a.root, 'q');
-	a.remove_Node(a.root, 'A');
+	a.remove_Node(a.root, 'Q');
+	a.remove_Node(a.root, 'B');
 	a.remove_Node(a.root, 'Z');
-	a.remove_Node(a.root, 'G');
-	a.remove_Node(a.root, 'G');
+	a.remove_Node(a.root, 'k');
+	a.remove_Node(a.root, 'F');
 	a.remove_Node(a.root, '@');
-	a.remove_Node(a.root, 'W');
-	a.remove_Node(a.root, 'X');
+	a.remove_Node(a.root, 'a');
+	a.remove_Node(a.root, 'y');
 	a.remove_Node(a.root, 'Y');
 
 	
