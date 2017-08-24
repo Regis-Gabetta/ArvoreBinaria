@@ -28,16 +28,14 @@ class Arvore{
   Arvore(const Arvore<T> *a);
   unsigned int getCount() const;
   unsigned int getHeight() const;
+	T* get(T o);
 
-  template<T>
-  friend ostream& operator<< (ostream&, const Arvore&);
-
-  template<T>
-  friend istream& operator >> (istream&, Arvore&);
+  friend ostream& operator<< (ostream&, const Arvore<T>&);
+  friend istream& operator >> (istream&, Arvore<T>&);
 
 
 	void insert(T o);
-	char remove(T o);
+	void remove(T o);
 
 
 	int remove_Node(Node *raiz, T o) {
@@ -236,28 +234,29 @@ void Arvore<T>::arvore_Destrutor(struct Node *raiz)
 
 
 template<typename T>
-char Arvore<T>::remove(T o){
-	Node* nor = root;
-	while(nor != NULL){
-		if (nor->info == o)
-			break;
+T* Arvore<T>::get(T o){
+	Node *no = root;
+	
+	while(no != NULL){
+		if (no->info > o)
+			no = no->r;
 		
+		else if (no->info <  o)
+			no = no->l;
+
 		else
-			if (o < nor->info)
-				nor = nor->l;
-			else
-				nor = nor->r;
+			break;
 	}
 	
-	if (nor != NULL){
-		Node* no = nor->p;
-		Node* nop = no;
-		delete nor; // NAAAAAAAAAAO
-								// ERRRADDDDDOOOO
-		
-	}
+	if (no != NULL)
+		return &(no->info);
 	
-	return 0;
+	return NULL;
+}
+
+template<typename T>
+void Arvore<T>::remove(T o){
+	remove_Node(root, o);
 }
 
 template<typename T>
