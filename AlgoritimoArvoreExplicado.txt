@@ -74,3 +74,94 @@ inserir info
 		no := no pai
 
 	raiz := nop
+
+
+
+
+remover info
+
+		se raiz = NULL
+			retornar 0;
+        
+		se valor < raizInfo
+		inteiro res
+		
+			se res = remover(raizEsquerda, valor)) == 1
+				Alturaraiz = max(AlturaRaizEsquerda, AlturaRaizDireita) + 1;
+				befao = FatorBalanceamentoRaiz;
+				se befao < -1
+				
+					se AlturaRaizDireitaEsquerda <= AlturaRaizDireitaDireita
+						rotacionarEsquerda;
+					senão
+					
+						rotacionarDireitaEsquerda
+					
+				
+			
+
+		
+
+		se valor > raizInfo
+		
+			se res = remover(raizDireita, valor == 1) 
+				AlturaRaiz = max(AlturaRaizEsquerda, AlturaRaizDireita) + 1;
+				befao = FatorBalanceamento(raiz);
+				se befao > 1
+				
+					se (AlturaRaizEsquerdaDireita <= AlturaRaizEsquerdaEsquerda)
+						rotacionarEsquerda
+					senão
+					
+						rotacionarDireitaEsquerda
+					
+				
+			
+		
+
+		se RaizInfo = valor
+		{
+			se (RaizEsquerda é Nulo ou RaizDireita é Nulo)
+			
+				old = raiz;
+				se RaizEsquerda não é Nulo
+					raiz = RaizEsquerda;
+				senão
+				
+					pai = raiz->p;
+					raiz = raiz->r;
+					se (raiz != NULL)
+						AlturaRaiz= max(AlturaEsquerda, AlturaDireita) + 1;
+						paiRaiz = pai;
+											
+				
+					
+				freeNode(old, raiz);
+				
+			
+			senão
+			
+				*no1 = raizDireita;
+				*no2 = raizDireitaEsquerda;
+				enquanto  no2NaoNulo 
+					no1 = no2;
+					no2 = no2Esquerda;
+				
+				temp = no1;
+				InfoRaiz = InfoTemp;
+				remover(RaizDireita,InfoTemp);
+				int befao = FatorBalanceamento(raiz);
+				se befao > 1
+				
+					se AlturaRaizEsquerdaDireita <= AlturaRaizEsquerdaEsquerda
+						rotacionarDireita
+					senão					
+						rotacionarEsquerdaDireita
+					
+				
+				AlturaRaiz = max(AlturaEsquerda, AlturaDireita) + 1;
+			
+			retornar 1
+		
+		retornar res
+	
