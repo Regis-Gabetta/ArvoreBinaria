@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string>
+#include <stack>
 
 #define max(n1,n2) (n1 > n2 ? n1 : n2)
 #define height(n) (n == NULL ? 0 : n->h)
@@ -12,6 +13,12 @@ using namespace std;
 
 template<typename T>
 class Arvore{
+		
+	typedef struct StackFrame{
+		const struct Arvore<T>::Node *no;
+		std::string *str;
+		char position;
+	} StackFrame;
 
 	struct Node{
 		T info;
@@ -30,8 +37,10 @@ class Arvore{
   unsigned int getHeight() const;
 	T* get(T o);
 
-  friend ostream& operator<< (ostream&, const Arvore<T>&);
-  friend istream& operator >> (istream&, Arvore<T>&);
+	template <typename U>
+  friend ostream& operator<< (ostream&, const Arvore<U>&);
+	template <typename U>
+  friend istream& operator >> (istream&, Arvore<U>&);
 
 
 	void insert(T o);
@@ -183,23 +192,69 @@ std::string Arvore<T>::toString() const{
 }
 
 template<typename T>
-std::string Arvore<T>::toStringAux(const Node *no) const {
+std::string Arvore<T>::toStringAux(const Node *no) const{
 
-	std::string str = "";
+	std::stack<StackFrame> stack = std::stack<StackFrame> ();
 	
-	if (no != NULL){
-		str += "(";
+	StackFrame sf;
+	sf.str = new std::string();
+	sf.no = &*(no);
+	sf.position = 0;
+	
+	stack.push(sf);
+	
+	for(; !stack.empty(); sf = stack.top(), stack.pop()){
 		
-		str += toStringAux(no->l);
+		std::string s;
+		
+		StackFrame temp;
+		
+		if (sf.no != NULL){
+			
+			switch(sf.position){
+				case 0:
+					goto pos0;
+					break;
+					
+				case 1:
+					goto pos1;
+					break;
+					
+				case 2:
+					goto pos2;
+					break;
+					
+				default:
+					goto pos0;
+					break;
+			}
+			
+			pos0:
+			sf.str->append("(");
+			temp.no = sf.no->l;
+			temp.str = sf.str;
+			temp.position = 0;
+			sf.position++;
+			stack.push(sf);
+			stack.push(temp);
+			continue;
 
-		str += no->info;
-
-		str += toStringAux(no->r);
-
-		str += ")";
+			pos1:
+			sf.str->operator +=(sf.no->info);
+			temp.no = sf.no->r;
+			temp.str = sf.str;
+			temp.position = 0;
+			sf.position++;
+			stack.push(sf);
+			stack.push(temp);
+			continue;
+			
+			pos2:
+			sf.str->append(")");
+		}
 	}
-
-	return str;
+	
+	return *sf.str;
 }
 
 template<typename T>
