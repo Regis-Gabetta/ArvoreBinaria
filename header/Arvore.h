@@ -20,6 +20,13 @@ class Arvore{
 		char position;
 	} StackFrame;
 
+	typedef struct StackFrameRemove {
+		struct Arvore<T>::Node *root;
+		T o;
+		char retorno;
+		char position;
+	} StackFrameRemove;
+
 	struct Node{
 		T info;
 		Node *l;
@@ -44,99 +51,8 @@ class Arvore{
 
 
 	void insert(T o);
-	void remove(T o);
-
-
-	int remove_Node(Node *raiz, T o) {
-		if (raiz == NULL)
-			return 0;
-		int res;
-		if (o < raiz->info)
-		{
-			if ((res = remove_Node(raiz->l, o)) == 1) {
-				raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
-				int befao = bf(raiz);
-				if (befao < -1)
-				{
-					if (height(raiz->r->l) <= height(raiz->r->r))
-						rotateLeft(raiz);
-					else
-					{
-						rotateRight(raiz->r);
-						rotateLeft(raiz);
-					}
-				}
-			}
-
-		}
-
-		if (o > raiz->info)
-		{
-			if ((res = remove_Node(raiz->r, o)) == 1) {
-				raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
-				int befao = bf(raiz);
-				if (befao > 1)
-				{
-					if (height(raiz->l->r) <= height(raiz->l->l))
-						rotateLeft(raiz);
-					else
-					{
-						rotateRight(raiz->r);
-						rotateLeft(raiz);
-					}
-				}
-			}
-		}
-
-		if (raiz->info == o)
-		{
-			if (raiz->l == NULL || raiz->r == NULL)
-			{
-				struct Node *old = raiz;
-				if (raiz->l != NULL)
-					raiz = raiz->l;
-				else
-				{
-					Node* pai = raiz->p;
-					raiz = raiz->r;
-					if (raiz != NULL)
-					{
-						raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
-						raiz->p = pai;
-					}						
-				}
-					
-				freeNode(old, raiz);
-				
-			}
-			else
-			{
-				struct Node *no1 = raiz->r;
-				struct Node *no2 = raiz->r->l;
-				while (no2 != NULL) {
-					no1 = no2;
-					no2 = no2->l;
-				}
-				struct Node* temp = no1;
-				raiz->info = temp->info;
-				remove_Node(raiz->r, temp->info);
-				int befao = bf(raiz);
-				if (befao > 1)
-				{
-					if (height(raiz->l->r) <= height(raiz->l->l))
-						rotateRight(raiz);
-					else
-					{
-						rotateLeft(raiz->l);
-						rotateRight(raiz);
-					}
-				}
-				raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
-			}
-			return 1;
-		}
-		return res;
-	}
+	void remove(T o);	
+	int remove_Node(Node *raiz, T o);
 	std::string toString() const;
 	Node *root;
 	
@@ -165,6 +81,155 @@ Arvore<T>::Arvore(const Arvore<T> *a){
 template<typename T>
 unsigned int Arvore<T>::getHeight() const{
 	return height(root);
+}
+
+template<typename T>
+int Arvore<T>::remove_Node(Node *raiz, T o) {
+	int ret = 1;
+	std::stack<StackFrameRemove> stack = std::stack<StackFrameRemove>();
+	StackFrameRemove sfr;
+
+	inicio:
+	if (raiz == NULL)
+	{
+		ret = 0;
+		goto doReturn;
+	}
+
+	if (o < raiz->info)
+	{
+		sfr.root = raiz;
+		sfr.o = o;
+		sfr.retorno = ret;
+		sfr.position = 1;
+		stack.push(sfr);
+
+		raiz = raiz->l;
+		goto inicio;
+
+		retorno1:
+		if (ret == 1) {
+			raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
+			int befao = bf(raiz);
+			if (befao < -1)
+			{
+				if (height(raiz->r->l) <= height(raiz->r->r))
+					rotateLeft(raiz);
+				else
+				{
+					rotateRight(raiz->r);
+					rotateLeft(raiz);
+				}
+			}
+		}
+	}
+
+	if (o > raiz->info)
+	{
+		sfr.root = raiz;
+		sfr.retorno = ret;
+		sfr.o = o;
+		sfr.position = 2;
+		stack.push(sfr);
+
+		raiz = raiz->r;
+		goto inicio;
+
+		retorno2:
+		if (ret == 1) {
+			raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
+			int befao = bf(raiz);
+			if (befao > 1)
+			{
+				if (height(raiz->l->r) <= height(raiz->l->l))
+					rotateLeft(raiz);
+				else
+				{
+					rotateRight(raiz->r);
+					rotateLeft(raiz);
+				}
+			}
+		}
+	}
+
+	if (raiz->info == o)
+	{
+		if (raiz->l == NULL || raiz->r == NULL)
+		{
+			struct Node *old = raiz;
+			if (raiz->l != NULL)
+				raiz = raiz->l;
+			else
+			{
+				Node* pai = raiz->p;
+				raiz = raiz->r;
+				if (raiz != NULL)
+				{
+					raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
+					raiz->p = pai;
+				}
+			}
+
+			freeNode(old, raiz);
+
+		}
+		else
+		{
+			struct Node *no1 = raiz->r;
+			struct Node *no2 = raiz->r->l;
+			while (no2 != NULL) {
+				no1 = no2;
+				no2 = no2->l;
+			}
+			struct Node* temp = no1;
+			raiz->info = temp->info;
+
+			sfr.root = raiz;
+			sfr.retorno = ret;
+			sfr.o = o;
+			sfr.position = 3;
+			stack.push(sfr);
+
+			raiz = raiz->r;
+			o = temp->info;
+			goto inicio;
+
+			retorno3:
+			int befao = bf(raiz);
+			if (befao > 1)
+			{
+				if (height(raiz->l->r) <= height(raiz->l->l))
+					rotateRight(raiz);
+				else
+				{
+					rotateLeft(raiz->l);
+					rotateRight(raiz);
+				}
+			}
+			raiz->h = max(height(raiz->l), height(raiz->r)) + 1;
+		}
+		ret = 1;
+		goto doReturn;
+	}
+
+	doReturn:
+	if (stack.empty())
+		return ret;
+
+	sfr = stack.top();
+	stack.pop();
+	raiz = sfr.root;
+	ret = sfr.retorno;
+	o = sfr.o;
+
+	if (sfr.position == 1)
+		goto retorno1;
+	else if (sfr.position == 2)
+		goto retorno2;
+	else if (sfr.position == 3)
+		goto retorno3;
+	else 
+		goto inicio;
 }
 
 template<typename T>
