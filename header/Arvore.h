@@ -14,11 +14,11 @@ using namespace std;
 template<typename T>
 class Arvore{
 		
-	typedef struct StackFrame{
+	typedef struct StackFrameToString{
 		const struct Arvore<T>::Node *no;
 		std::string *str;
 		char position;
-	} StackFrame;
+	} StackFrameToString;
 
 	typedef struct StackFrameRemove {
 		struct Arvore<T>::Node *root;
@@ -26,6 +26,11 @@ class Arvore{
 		char retorno;
 		char position;
 	} StackFrameRemove;
+
+	typedef struct StackFrameDestructor {
+		struct Arvore<T>::Node *root;
+		char position;
+	}StackFrameDestructor;
 
 	struct Node{
 		T info;
@@ -259,9 +264,9 @@ std::string Arvore<T>::toString() const{
 template<typename T>
 std::string Arvore<T>::toStringAux(const Node *no) const{
 
-	std::stack<StackFrame> stack = std::stack<StackFrame> ();
+	std::stack<StackFrameToString> stack = std::stack<StackFrameToString> ();
 	
-	StackFrame sf;
+	StackFrameToString sf;
 	sf.str = new std::string();
 	sf.no = &*(no);
 	sf.position = 0;
@@ -272,7 +277,7 @@ std::string Arvore<T>::toStringAux(const Node *no) const{
 		
 		std::string s;
 		
-		StackFrame temp;
+		StackFrameToString temp;
 		
 		if (sf.no != NULL){
 			
@@ -332,13 +337,41 @@ Arvore<T>::~Arvore(){
 template<typename T>
 void Arvore<T>::arvore_Destrutor(struct Node *raiz)
 {
+	std::stack<StackFrameDestructor> stack = std::stack<StackFrameDestructor>();
+	StackFrameDestructor sfd;
+	inicio:
 	if (raiz != NULL)
 	{
-		arvore_Destrutor(raiz->l);
-		arvore_Destrutor(raiz->r);
+		sfd.root = raiz;
+		sfd.position = 1;
+		stack.push(sfd);
+
+		raiz = raiz->l;
+		goto inicio;
+
+		pos1:
+		sfd.root = raiz;
+		sfd.position = 2;
+		stack.push(sfd);
+
+		raiz = raiz->r;
+		goto inicio;
+
+		pos2:
 		free(raiz) ;
 		raiz = NULL;
 	}
+	if (!stack.empty())
+	{
+		sfd = stack.top();
+		stack.pop();
+		raiz = sfd.root;	
+		if (sfd.position == 1)
+			goto pos1;
+		else if (sfd.position == 2)
+			goto pos2;
+	}
+
 }
 
 //template<typename T>
